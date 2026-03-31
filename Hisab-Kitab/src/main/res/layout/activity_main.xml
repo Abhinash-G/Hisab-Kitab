@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Title - Material Design Header -->
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/titleText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/HOME_PAGE_HEADER"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        android:textColor="?attr/colorPrimary"
+        android:layout_marginTop="8dp"
+        android:textStyle="bold"
+        android:layout_marginBottom="24dp"
+        android:padding="12dp" />
+
+    <!-- Keywords Input -->
+    <EditText
+        android:id="@+id/keywordInput"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="@string/KEYWORD_SUGGESTION"
+        android:inputType="text"
+        android:layout_marginBottom="12dp"
+        android:padding="12dp" />
+
+    <!-- Start Date Button -->
+    <Button
+        android:id="@+id/startDateButton"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="@string/SELECT_START_DATE"
+        android:layout_marginBottom="8dp" />
+
+    <!-- End Date Button -->
+    <Button
+        android:id="@+id/endDateButton"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="@string/SELECT_END_DATE"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Scan Button -->
+    <Button
+        android:id="@+id/startScanButton"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="@string/START_SCAN"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Feedback TextView -->
+    <TextView
+        android:id="@+id/feedbackText"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="@string/READY_TO_SCAN"
+        android:textSize="14sp"
+        android:scrollbars="vertical"
+        android:padding="8dp" />
+
+</LinearLayout>
+
