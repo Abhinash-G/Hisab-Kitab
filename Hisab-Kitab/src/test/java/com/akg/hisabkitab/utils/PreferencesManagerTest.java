@@ -1,4 +1,4 @@
-package com.akg.hisabkitab;
+package com.akg.hisabkitab.utils;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -9,8 +9,6 @@ import org.robolectric.RuntimeEnvironment;
 import android.content.Context;
 
 import static org.junit.Assert.*;
-
-import com.akg.hisabkitab.utils.PreferencesManager;
 
 /**
  * Unit tests for PreferencesManager class
