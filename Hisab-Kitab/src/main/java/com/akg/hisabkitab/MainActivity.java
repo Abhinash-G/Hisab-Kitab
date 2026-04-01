@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
     private void onStartScanClicked() {
         Log.d(TAG, "onStartScanClicked: Starting SMS scan process");
 
-        if (hasReadSmsPermission()) {
+        if (lacksReadSmsPermission()) {
             Log.w(TAG, "onStartScanClicked: READ_SMS permission not granted");
             updateFeedback("❌ READ_SMS permission required. Please grant it in app settings.");
             return;
@@ -194,9 +194,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Check if READ_SMS permission is granted
+     * Check if READ_SMS permission is NOT granted (lacks permission)
      */
-    private boolean hasReadSmsPermission() {
+    private boolean lacksReadSmsPermission() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS)!=PackageManager.PERMISSION_GRANTED;
     }
 
@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
      * Request READ_SMS permission at runtime (for Android 6.0+)
      */
     private void requestPermissions() {
-        boolean needsPermission = hasReadSmsPermission();
+        boolean needsPermission = lacksReadSmsPermission();
         Log.d(TAG, "requestPermissions: Permission needed: " + needsPermission);
 
         if (needsPermission) {
