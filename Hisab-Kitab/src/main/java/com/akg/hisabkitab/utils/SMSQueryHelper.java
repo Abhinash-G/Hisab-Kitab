@@ -3,6 +3,8 @@ package com.akg.hisabkitab.utils;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.util.Pair;
 
@@ -134,7 +136,7 @@ public class SMSQueryHelper {
         List<String> args = new ArrayList<>();
 
         // Add keyword clause if keywords provided
-        if (!keywords.isEmpty()) {
+        if (keywords != null && !keywords.isEmpty()) {
             whereClause.append(buildKeywordWhereClause(keywords));
             for (String keyword : keywords) {
                 args.add("%" + keyword + "%");
@@ -169,60 +171,63 @@ public class SMSQueryHelper {
     public List<SMSMessage> querySMS(String keywords, Long userStartDate, Long userEndDate) {
         List<SMSMessage> messages = new ArrayList<>();
 
-        try {
-            // Validate and get date range
-            Pair<Long, Long> dateRange = SyncStrategy.getDateRange(context, userStartDate, userEndDate);
-            long startDate = dateRange.first;
-            long endDate = dateRange.second;
+        // Validate and get date range
+        Pair<Long, Long> dateRange = SyncStrategy.getDateRange(context, userStartDate, userEndDate);
+        long startDate = dateRange.first;
+        long endDate = dateRange.second;
 
-            // Validate date range
-            if (!SyncStrategy.isValidDateRange(startDate, endDate)) {
-                Log.e(TAG, "Invalid date range provided");
-                return messages;
-            }
-
-            // Parse keywords
-            List<String> keywordList = parseKeywords(keywords);
-
-            // Build selection
-            Pair<String, String[]> selection = buildSelection(keywordList, startDate, endDate);
-            String whereClause = selection.first;
-            String[] selectionArgs = selection.second;
-
-            // Query ContentProvider
-            Log.d(TAG, "Querying SMS inbox with: " + whereClause);
-            Cursor cursor = context.getContentResolver().query(
-                    SMS_INBOX_URI,
-                    SMS_PROJECTION,
-                    whereClause,
-                    selectionArgs,
-                    "date DESC"  // Sort by date descending (newest first)
-            );
-
-            if (cursor != null) {
-                try {
-                    Log.d(TAG, "Query returned " + cursor.getCount() + " results");
-                    while (cursor.moveToNext()) {
-                        String address = cursor.getString(COLUMN_ADDRESS);
-                        String body = cursor.getString(COLUMN_BODY);
-                        long timestamp = cursor.getLong(COLUMN_DATE);
-
-                        SMSMessage message = new SMSMessage(timestamp, address, body);
-                        messages.add(message);
-                    }
-                    Log.d(TAG, "Parsed " + messages.size() + " SMS messages");
-                } finally {
-                    cursor.close();
-                }
-            } else {
-                Log.w(TAG, "Query returned null cursor");
-            }
-
-        } catch (SecurityException e) {
-            Log.e(TAG, "Permission denied: READ_SMS not granted", e);
-        } catch (Exception e) {
-            Log.e(TAG, "Error querying SMS", e);
+        // Validate date range
+        if (!SyncStrategy.isValidDateRange(startDate, endDate)) {
+            Log.e(TAG, "Invalid date range provided");
+            return messages;
         }
+
+        // Parse keywords
+        List<String> keywordList = parseKeywords(keywords);
+
+        // Build selection
+        Pair<String, String[]> selection = buildSelection(keywordList, startDate, endDate);
+        String whereClause = selection.first;
+        String[] selectionArgs = selection.second;
+
+        // Query ContentProvider
+        Log.d(TAG, "Querying SMS inbox with: " + whereClause);
+        Cursor cursor = context.getContentResolver().query(
+                SMS_INBOX_URI,
+                SMS_PROJECTION,
+                whereClause,
+                selectionArgs,
+                "date DESC"  // Sort by date descending (newest first)
+        );
+
+        if (cursor != null) {
+            try {
+                Log.d(TAG, "Query returned " + cursor.getCount() + " results");
+                while (cursor.moveToNext()) {
+                    String address = cursor.getString(COLUMN_ADDRESS);
+                    String body = cursor.getString(COLUMN_BODY);
+                    long timestamp = cursor.getLong(COLUMN_DATE);
+
+                    SMSMessage message = new SMSMessage(timestamp, address, body);
+                    messages.add(message);
+                }
+                Log.d(TAG, "Parsed " + messages.size() + " SMS messages");
+            } finally {
+                cursor.close();
+            }
+        } else {
+            Log.w(TAG, "Query returned null cursor");
+        }
+
+        // Update last sync timestamp for incremental sync after successful query
+        if (SyncStrategy.isIncrementalSync(userStartDate, userEndDate)) {
+            PreferencesManager prefManager = PreferencesManager.getInstance(context);
+            boolean success = prefManager.setLastSyncTimestamp(endDate);
+            if (!success) {
+                Log.w(TAG, "Failed to update last sync timestamp after successful query");
+            }
+        }
+
 
         return messages;
     }
@@ -241,12 +246,14 @@ public class SMSQueryHelper {
             try {
                 List<SMSMessage> messages = querySMS(keywords, userStartDate, userEndDate);
                 if (callback != null) {
-                    callback.onSuccess(messages);
+                    // Post success callback to main thread
+                    new Handler(Looper.getMainLooper()).post(() -> callback.onSuccess(messages));
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Error in async SMS query", e);
                 if (callback != null) {
-                    callback.onError(e);
+                    // Post error callback to main thread
+                    new Handler(Looper.getMainLooper()).post(() -> callback.onError(e));
                 }
             }
         });
@@ -274,4 +281,3 @@ public class SMSQueryHelper {
         void onError(Exception error);
     }
 }
-

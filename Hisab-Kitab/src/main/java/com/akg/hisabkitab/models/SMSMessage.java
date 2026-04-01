@@ -1,5 +1,7 @@
 package com.akg.hisabkitab.models;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,7 +41,12 @@ public class SMSMessage {
             json.put("sender", sender);
             json.put("body", body);
         } catch (JSONException e) {
-            // Handle JSON exception
+            try {
+                Log.e("SMSMessage", "Error converting to JSON", e);
+            } catch (RuntimeException re) {
+                // Ignore for unit tests where Log may not be available
+                e.printStackTrace();
+            }
         }
         return json;
     }

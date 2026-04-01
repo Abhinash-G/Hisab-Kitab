@@ -5,6 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import com.akg.hisabkitab.models.SMSMessage;
+import org.json.JSONObject;
 
 /**
  * Unit tests for SMSMessage data class
@@ -226,5 +227,70 @@ public class SMSMessageTest {
         SMSMessage message = new SMSMessage(1000, "VM-HDFCBK", specialBody);
         assertEquals("Should handle special characters", specialBody, message.body);
     }
-}
 
+    /**
+     * Test 21: SMSMessage toJson - typical values
+     */
+    @Test
+    public void testToJsonTypical() throws Exception {
+        SMSMessage message = new SMSMessage(1000L, "HDFC", "Test body");
+        JSONObject json = message.toJson();
+
+        assertEquals("Timestamp should be correct", 1000L, json.getLong("timestamp"));
+        assertEquals("Sender should be correct", "HDFC", json.getString("sender"));
+        assertEquals("Body should be correct", "Test body", json.getString("body"));
+    }
+
+    /**
+     * Test 22: SMSMessage toJson - null sender and body (converted to empty strings)
+     */
+    @Test
+    public void testToJsonNullFields() throws Exception {
+        SMSMessage message = new SMSMessage(2000L, null, null);
+        JSONObject json = message.toJson();
+
+        assertEquals("Timestamp should be correct", 2000L, json.getLong("timestamp"));
+        assertEquals("Sender should be empty string", "", json.getString("sender"));
+        assertEquals("Body should be empty string", "", json.getString("body"));
+    }
+
+    /**
+     * Test 23: SMSMessage toJson - empty strings
+     */
+    @Test
+    public void testToJsonEmptyStrings() throws Exception {
+        SMSMessage message = new SMSMessage(3000L, "", "");
+        JSONObject json = message.toJson();
+
+        assertEquals("Timestamp should be correct", 3000L, json.getLong("timestamp"));
+        assertEquals("Sender should be empty", "", json.getString("sender"));
+        assertEquals("Body should be empty", "", json.getString("body"));
+    }
+
+    /**
+     * Test 24: SMSMessage toJson - special characters and long content
+     */
+    @Test
+    public void testToJsonSpecialCharacters() throws Exception {
+        String specialBody = "Rs.500 debited from a/c **1234 on 30-03-26 to UPI/merchant. Long message with special chars: @#$%^&*()";
+        SMSMessage message = new SMSMessage(4000L, "VM-HDFCBK", specialBody);
+        JSONObject json = message.toJson();
+
+        assertEquals("Timestamp should be correct", 4000L, json.getLong("timestamp"));
+        assertEquals("Sender should be correct", "VM-HDFCBK", json.getString("sender"));
+        assertEquals("Body should be correct", specialBody, json.getString("body"));
+    }
+
+    /**
+     * Test 25: SMSMessage toJson - zero timestamp
+     */
+    @Test
+    public void testToJsonZeroTimestamp() throws Exception {
+        SMSMessage message = new SMSMessage(0L, "Test", "Body");
+        JSONObject json = message.toJson();
+
+        assertEquals("Timestamp should be zero", 0L, json.getLong("timestamp"));
+        assertEquals("Sender should be correct", "Test", json.getString("sender"));
+        assertEquals("Body should be correct", "Body", json.getString("body"));
+    }
+}

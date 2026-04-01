@@ -90,7 +90,7 @@ public final class SyncStrategy {
      *
      * @param startDate Start date in milliseconds
      * @param endDate End date in milliseconds
-     * @return true if startDate < endDate, false otherwise
+     * @return true if startDate <= endDate, false otherwise
      */
     public static boolean isValidDateRange(long startDate, long endDate) {
         boolean valid = startDate <= endDate;
@@ -100,4 +100,3 @@ public final class SyncStrategy {
         return valid;
     }
 }
-
