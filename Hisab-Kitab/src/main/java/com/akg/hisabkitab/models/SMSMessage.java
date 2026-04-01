@@ -1,5 +1,8 @@
 package com.akg.hisabkitab.models;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * SMSMessage: Data class representing a parsed SMS message from device storage.
  *
@@ -22,6 +25,23 @@ public class SMSMessage {
         this.timestamp = timestamp;
         this.sender = sender != null ? sender : "";
         this.body = body != null ? body : "";
+    }
+
+    /**
+     * Convert SMSMessage to JSON object.
+     *
+     * @return JSONObject representation
+     */
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("timestamp", timestamp);
+            json.put("sender", sender);
+            json.put("body", body);
+        } catch (JSONException e) {
+            // Handle JSON exception
+        }
+        return json;
     }
 
     @Override
@@ -53,4 +73,3 @@ public class SMSMessage {
         return result;
     }
 }
-
