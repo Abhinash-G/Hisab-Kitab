@@ -76,6 +76,12 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: MainActivity initialization complete");
     }
 
+    /**
+     * Finds and assigns all UI view references used by the activity.
+     *
+     * Initializes fields for keyword input, date buttons, scan/send/reset buttons,
+     * progress indicator, and feedback text by locating their views in the layout.
+     */
     private void initializeUI() {
         keywordInput = findViewById(R.id.keywordInput);
         startDateButton = findViewById(R.id.startDateButton);
@@ -87,6 +93,15 @@ public class MainActivity extends AppCompatActivity {
         feedbackText = findViewById(R.id.feedbackText);
     }
 
+    /**
+     * Binds click handlers for the activity's buttons.
+     *
+     * - Tapping the start date button opens a date picker to choose the start date.
+     * - Tapping the end date button opens a date picker to choose the end date.
+     * - Tapping the start scan button begins an SMS scan.
+     * - Tapping the reset button clears the stored last-sync timestamp and resets selected dates.
+     * - Tapping the send button shows a short toast indicating the feature is not implemented.
+     */
     private void setupListeners() {
         startDateButton.setOnClickListener(v -> showDatePicker(true));
 
@@ -101,6 +116,14 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+    /**
+     * Clears the persisted "last sync" timestamp and updates the UI to reflect the reset state.
+     *
+     * Attempts to remove the stored last sync timestamp from preferences, shows a Toast indicating
+     * success or failure, and updates the feedback text. On success it clears any selected start/end
+     * dates and resets the start/end date button labels. If an exception occurs, logs the error and
+     * updates the feedback with the exception message.
+     */
     private void onResetClicked() {
         Log.d(TAG, "onResetClicked: Resetting sync timestamp");
         try {
@@ -126,6 +149,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Opens a date picker and applies the chosen date to either the start or end selection.
+     *
+     * When a date is chosen the method sets the corresponding epoch timestamp:
+     * - for the start date, the timestamp is set to 00:00:00.000 of the selected day;
+     * - for the end date, the timestamp is set to 23:59:59.999 of the selected day.
+     * The associated button text is updated to display the formatted selected date.
+     *
+     * @param isStartDate true to edit the start date, false to edit the end date
+     */
     private void showDatePicker(final boolean isStartDate) {
         Log.d(TAG, "showDatePicker: Showing date picker for " + (isStartDate ? "start" : "end") + " date");
 
@@ -174,7 +207,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Handle Start Scan button click
+     * Initiates an SMS scan using the current keyword and date-range inputs and updates the UI with progress and results.
+     *
+     * <p>Checks for READ_SMS permission and aborts with a feedback message if permission is missing. While scanning,
+     * shows a progress indicator, disables the Start Scan button, and displays the selected filters. On completion,
+     * re-enables the button and either displays the found messages or shows an error message.</p>
      */
     private void onStartScanClicked() {
         Log.d(TAG, "onStartScanClicked: Starting SMS scan process");
