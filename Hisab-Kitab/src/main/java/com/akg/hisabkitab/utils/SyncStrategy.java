@@ -29,7 +29,7 @@ public final class SyncStrategy {
     }
 
     private static final String TAG = "SyncStrategy";
-    private static final long DEFAULT_DAYS_BACK = 30L;
+    private static final long DEFAULT_DAYS_BACK = 100L;
     private static final long MILLIS_PER_DAY = 24 * 60 * 60 * 1000L;
 
     /**
