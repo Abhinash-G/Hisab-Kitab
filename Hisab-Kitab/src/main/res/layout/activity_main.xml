@@ -28,29 +28,63 @@
         android:layout_marginBottom="12dp"
         android:padding="12dp" />
 
-    <!-- Start Date Button -->
-    <Button
-        android:id="@+id/startDateButton"
+    <!-- Date Selection Row -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:text="@string/SELECT_START_DATE"
-        android:layout_marginBottom="8dp" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp">
 
-    <!-- End Date Button -->
-    <Button
-        android:id="@+id/endDateButton"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:text="@string/SELECT_END_DATE"
-        android:layout_marginBottom="16dp" />
+        <Button
+            android:id="@+id/startDateButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/SELECT_START_DATE"
+            android:contentDescription="@string/SELECT_START_DATE"
+            android:layout_marginEnd="4dp" />
 
-    <!-- Scan Button -->
-    <Button
-        android:id="@+id/startScanButton"
+        <Button
+            android:id="@+id/endDateButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/SELECT_END_DATE"
+            android:contentDescription="@string/SELECT_END_DATE"
+            android:layout_marginStart="4dp" />
+    </LinearLayout>
+
+    <!-- Action Buttons Row -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:text="@string/START_SCAN"
-        android:layout_marginBottom="16dp" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <Button
+            android:id="@+id/startScanButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/START_SCAN"
+            android:layout_marginEnd="4dp" />
+
+        <Button
+            android:id="@+id/sendButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/SEND_BUTTON"
+            android:layout_marginHorizontal="4dp" />
+
+        <Button
+            android:id="@+id/resetButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/RESET_BUTTON"
+            android:layout_marginStart="4dp" />
+    </LinearLayout>
 
     <!-- Progress Bar -->
     <ProgressBar
@@ -61,16 +95,22 @@
         android:visibility="gone"
         android:layout_marginBottom="16dp" />
 
-    <!-- Feedback TextView -->
-    <TextView
-        android:id="@+id/feedbackText"
+    <!-- Feedback ScrollView -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="@string/READY_TO_SCAN"
-        android:textSize="14sp"
-        android:scrollbars="vertical"
-        android:padding="8dp" />
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/feedbackText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/READY_TO_SCAN"
+            android:textSize="14sp"
+            android:scrollbars="vertical"
+            android:padding="8dp" />
+
+    </ScrollView>
 
 </LinearLayout>
-

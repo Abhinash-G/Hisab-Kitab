@@ -2,8 +2,10 @@
     <string name="app_name">Hisab-Kitab</string>
     <string name="HOME_PAGE_HEADER">Expense Tracker - SMS Scanner</string>
     <string name="KEYWORD_SUGGESTION">Enter bank keywords (e.g., HDFCBK, SBI, ICICI)</string>
-    <string name="SELECT_START_DATE">Select Start Date</string>
-    <string name="SELECT_END_DATE">Select End Date</string>
-    <string name="START_SCAN">Start Scan</string>
+    <string name="SELECT_START_DATE">Start</string>
+    <string name="SELECT_END_DATE">End</string>
+    <string name="START_SCAN">Scan</string>
     <string name="READY_TO_SCAN">Ready to scan</string>
+    <string name="SEND_BUTTON">Send</string>
+    <string name="RESET_BUTTON">Reset</string>
 </resources>

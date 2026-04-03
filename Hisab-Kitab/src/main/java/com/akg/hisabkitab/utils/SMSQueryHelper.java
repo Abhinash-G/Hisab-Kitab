@@ -34,7 +34,7 @@ import java.util.concurrent.Executors;
 public class SMSQueryHelper {
 
     private static final String TAG = "SMSQueryHelper";
-    private static final Uri SMS_INBOX_URI = Uri.parse("content://sms/inbox");
+    private static final Uri SMS_INBOX_URI = Uri.parse("content://sms/");
     private static final String[] SMS_PROJECTION = {"address", "body", "date"};
     private static final int COLUMN_ADDRESS = 0;
     private static final int COLUMN_BODY = 1;

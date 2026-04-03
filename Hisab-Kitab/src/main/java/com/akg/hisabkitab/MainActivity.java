@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -17,6 +18,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.akg.hisabkitab.models.SMSMessage;
+import com.akg.hisabkitab.utils.PreferencesManager;
 import com.akg.hisabkitab.utils.SMSQueryHelper;
 
 import org.json.JSONArray;
@@ -34,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private Button startDateButton;
     private Button endDateButton;
     private Button startScanButton;
+    private Button sendButton;
+    private Button resetButton;
     private ProgressBar progressBar;
     private TextView feedbackText;
 
@@ -77,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
         startDateButton = findViewById(R.id.startDateButton);
         endDateButton = findViewById(R.id.endDateButton);
         startScanButton = findViewById(R.id.startScanButton);
+        sendButton = findViewById(R.id.sendButton);
+        resetButton = findViewById(R.id.resetButton);
         progressBar = findViewById(R.id.progressBar);
         feedbackText = findViewById(R.id.feedbackText);
     }
@@ -87,6 +93,39 @@ public class MainActivity extends AppCompatActivity {
         endDateButton.setOnClickListener(v -> showDatePicker(false));
 
         startScanButton.setOnClickListener(v -> onStartScanClicked());
+
+        resetButton.setOnClickListener(v -> onResetClicked());
+
+        sendButton.setOnClickListener(v ->
+            Toast.makeText(this, "Send functionality not implemented yet", Toast.LENGTH_SHORT).show()
+        );
+    }
+
+    private void onResetClicked() {
+        Log.d(TAG, "onResetClicked: Resetting sync timestamp");
+        try {
+            boolean success = PreferencesManager.getInstance(this).clearLastSyncTimestamp();
+            String message = success ? "Sync timestamp reset successfully" : "Failed to reset sync timestamp";
+
+            // Showing a Toast (LENGTH_LONG as a "medium" duration)
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+
+            if (success) {
+                updateFeedback("✅ Sync timestamp cleared. The next scan will include all available messages.");
+                // Also clear selected dates to reflect a fresh state
+                selectedStartDate = null;
+                selectedEndDate = null;
+                startDateButton.setText(R.string.SELECT_START_DATE);
+                startDateButton.setContentDescription(getString(R.string.SELECT_START_DATE));
+                endDateButton.setText(R.string.SELECT_END_DATE);
+                endDateButton.setContentDescription(getString(R.string.SELECT_END_DATE));
+            } else {
+                updateFeedback("❌ Failed to reset sync timestamp in preferences.");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error resetting sync timestamp", e);
+            updateFeedback("❌ Error resetting sync timestamp: " + e.getMessage());
+        }
     }
 
     private void showDatePicker(final boolean isStartDate) {
@@ -103,19 +142,27 @@ public class MainActivity extends AppCompatActivity {
                 this,
                 (view, year, month, dayOfMonth) -> {
                     Calendar selectedCal = Calendar.getInstance();
-                    selectedCal.set(year, month, dayOfMonth, 0, 0, 0);
-                    selectedCal.set(Calendar.MILLISECOND, 0);
-                    long timestamp = selectedCal.getTimeInMillis();
-
-                    Log.d(TAG, "showDatePicker: Date selected - " + (isStartDate ? "start" : "end") + ": " + formatDate(timestamp) + " (" + timestamp + ")");
 
                     if (isStartDate) {
-                        selectedStartDate = timestamp;
-                        startDateButton.setText("Start: " + formatDate(timestamp));
+                        // Start of the day: 00:00:00.000
+                        selectedCal.set(year, month, dayOfMonth, 0, 0, 0);
+                        selectedCal.set(Calendar.MILLISECOND, 0);
+                        selectedStartDate = selectedCal.getTimeInMillis();
+                        String formattedDate = "Start: " + formatDate(selectedStartDate);
+                        startDateButton.setText(formattedDate);
+                        startDateButton.setContentDescription(formattedDate);
                     } else {
-                        selectedEndDate = timestamp;
-                        endDateButton.setText("End: " + formatDate(timestamp));
+                        // End of the day: 23:59:59.999
+                        selectedCal.set(year, month, dayOfMonth, 23, 59, 59);
+                        selectedCal.set(Calendar.MILLISECOND, 999);
+                        selectedEndDate = selectedCal.getTimeInMillis();
+                        String formattedDate = "End: " + formatDate(selectedEndDate);
+                        endDateButton.setText(formattedDate);
+                        endDateButton.setContentDescription(formattedDate);
                     }
+
+                    Log.d(TAG, "Date selected - " + (isStartDate ? "start" : "end") + ": " +
+                            formatDate(isStartDate ? selectedStartDate : selectedEndDate));
                 },
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
@@ -146,9 +193,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Get user inputs
         String keywords = keywordInput.getText() != null ? keywordInput.getText().toString().trim() : "";
-        String start = selectedStartDate != null ? formatDate(selectedStartDate) : "Auto (Last sync)";
-        String end = selectedEndDate != null ? formatDate(selectedEndDate) : "Today";
-
         // Show progress
         progressBar.setVisibility(android.view.View.VISIBLE);
         startScanButton.setEnabled(false);
