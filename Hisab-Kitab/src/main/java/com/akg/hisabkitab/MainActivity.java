@@ -116,7 +116,9 @@ public class MainActivity extends AppCompatActivity {
                 selectedStartDate = null;
                 selectedEndDate = null;
                 startDateButton.setText(R.string.SELECT_START_DATE);
+                startDateButton.setContentDescription(getString(R.string.SELECT_START_DATE));
                 endDateButton.setText(R.string.SELECT_END_DATE);
+                endDateButton.setContentDescription(getString(R.string.SELECT_END_DATE));
             } else {
                 updateFeedback("❌ Failed to reset sync timestamp in preferences.");
             }
@@ -146,13 +148,17 @@ public class MainActivity extends AppCompatActivity {
                         selectedCal.set(year, month, dayOfMonth, 0, 0, 0);
                         selectedCal.set(Calendar.MILLISECOND, 0);
                         selectedStartDate = selectedCal.getTimeInMillis();
-                        startDateButton.setText("Start: " + formatDate(selectedStartDate));
+                        String formattedDate = "Start: " + formatDate(selectedStartDate);
+                        startDateButton.setText(formattedDate);
+                        startDateButton.setContentDescription(formattedDate);
                     } else {
                         // End of the day: 23:59:59.999
                         selectedCal.set(year, month, dayOfMonth, 23, 59, 59);
                         selectedCal.set(Calendar.MILLISECOND, 999);
                         selectedEndDate = selectedCal.getTimeInMillis();
-                        endDateButton.setText("End: " + formatDate(selectedEndDate));
+                        String formattedDate = "End: " + formatDate(selectedEndDate);
+                        endDateButton.setText(formattedDate);
+                        endDateButton.setContentDescription(formattedDate);
                     }
 
                     Log.d(TAG, "Date selected - " + (isStartDate ? "start" : "end") + ": " +

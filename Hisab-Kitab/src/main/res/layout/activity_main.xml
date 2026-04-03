@@ -41,6 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/SELECT_START_DATE"
+            android:contentDescription="@string/SELECT_START_DATE"
             android:layout_marginEnd="4dp" />
 
         <Button
@@ -49,6 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/SELECT_END_DATE"
+            android:contentDescription="@string/SELECT_END_DATE"
             android:layout_marginStart="4dp" />
     </LinearLayout>
 
