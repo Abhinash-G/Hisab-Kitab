@@ -24,6 +24,9 @@ import android.util.Pair;
  */
 public final class SyncStrategy {
 
+    /**
+     * Prevents instantiation of this utility class.
+     */
     private SyncStrategy() {
         // Utility class - prevent instantiation
     }
